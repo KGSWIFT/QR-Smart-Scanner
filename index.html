@@ -59,6 +59,7 @@ code{background:#0B1220;padding:10px 12px;border-radius:8px;color:var(--txt);dir
 <header>
   <div class="brand"><span class="logo">▣</span><div><b>QR SMART SCANNER</b><small data-i18n="sub"></small></div></div>
   <div class="tools">
+    <button class="ghost hidden" id="homeBtn" data-i18n="home"></button>
     <button class="ghost" id="langBtn">EN</button>
     <button class="ghost" id="setBtn" aria-label="Settings">⚙</button>
   </div>
@@ -117,7 +118,7 @@ code{background:#0B1220;padding:10px 12px;border-radius:8px;color:var(--txt);dir
   </section>
 </main>
 <footer class="site-footer">
-  <div class="rights">جــــميـع الــــحقــــوق مـــــــحفوظـــــة 2026 KG™</div>
+  <div class="rights">جــــميـع الــــحقــــوق مـــــــحفوظـــــة 2025 KG™</div>
   <div class="by">Created by Khalid AlGhazali</div>
 </footer>
 <div id="toast" class="toast hidden"></div>
@@ -10226,7 +10227,7 @@ function findAlignmentPattern(matrix, alignmentPatternQuads, topRight, topLeft, 
 <script>(function () {
 'use strict';
 const T = {
-ar: {sub:'التحقق الذكي من الوثائق',h1:'اقرأ رموز QR مباشرة من شاشتك',p:'التقط، حدّد، امسح وتحقق من الوثائق دون استخدام الهاتف.',capture:'التقاط الشاشة',upload:'اختيار صورة من الجهاز',
+ar: {home:'الشاشة الرئيسية',sub:'التحقق الذكي من الوثائق',h1:'اقرأ رموز QR مباشرة من شاشتك',p:'التقط، حدّد، امسح وتحقق من الوثائق دون استخدام الهاتف.',capture:'التقاط الشاشة',upload:'اختيار صورة من الجهاز',
 s1:'افتح المستند (PDF أو صورة) الذي يحتوي على رمز QR.',s2:'اضغط «التقاط الشاشة» واختر النافذة أو الشاشة.',s3:'اضغط «تجميد اللقطة» ثم حدّد رمز QR بالسحب بالماوس.',s4:'افتح رابط التحقق وراجع الموقع الرسمي للجهة المصدرة.',
 privacy:'تتم المعالجة محلياً داخل المتصفح، ولا يُرفع أي شيء إلى خادم. لا يُستخدم الميكروفون أو الكاميرا.',
 live:'هذه معاينة مباشرة. اضغط «تجميد اللقطة» عندما يظهر رمز QR.',select:'اسحب بالماوس لتحديد رمز QR.',freeze:'تجميد اللقطة',retry:'إعادة التحديد',cancel:'إلغاء',
@@ -10236,7 +10237,7 @@ history:'آخر عمليات القراءة (هذه الجلسة فقط)',clear:
 notfound:'تعذر التعرف على رمز QR. حدّد المنطقة بشكل أدق وبحيث يظهر الرمز كاملاً مع هامش حوله، ثم أعد المحاولة.',
 nonweb:'الرمز يحتوي على محتوى ليس رابط HTTP/HTTPS، لذلك لن يُفتح:',denied:'تم رفض مشاركة الشاشة أو لم تبدأ.',unsupported:'متصفحك لا يدعم التقاط الشاشة. استخدم Chrome أو Edge، أو اختر صورة من الجهاز.',
 secure:'التقاط الشاشة يتطلب HTTPS أو localhost. شغّل الموقع عبر localhost (راجع README) أو استخدم خيار اختيار صورة.',copied:'تم نسخ الرابط',tiny:'المنطقة صغيرة جداً، حدّد منطقة أكبر.',cleared:'تم مسح السجل'},
-en: {sub:'Smart Document Verification',h1:'Scan QR Codes Directly From Your Screen',p:'Capture, Select, Scan and Verify Documents Without Using Your Phone.',capture:'CAPTURE SCREEN',upload:'Choose an image',
+en: {home:'Home',sub:'Smart Document Verification',h1:'Scan QR Codes Directly From Your Screen',p:'Capture, Select, Scan and Verify Documents Without Using Your Phone.',capture:'CAPTURE SCREEN',upload:'Choose an image',
 s1:'Open the document (PDF or image) that contains the QR code.',s2:'Press CAPTURE SCREEN and pick a screen or window.',s3:'Press Freeze Frame, then drag with the mouse to select the QR code.',s4:'Open the verification link and check the issuer\'s official site.',
 privacy:'Everything is processed locally in your browser; nothing is uploaded. No camera or microphone is used.',
 live:'Live preview. Press Freeze Frame when the QR code is visible.',select:'Drag with the mouse to select the QR code.',freeze:'Freeze Frame',retry:'Reselect',cancel:'Cancel',
@@ -10269,7 +10270,7 @@ function setMode(m) {
   show('home', m === 'home'); show('stage', m === 'live' || m === 'select'); show('result', m === 'result');
   video.style.display = m === 'live' ? 'block' : 'none';
   canvas.style.display = m === 'select' ? 'block' : 'none';
-  show('freezeBtn', m === 'live'); show('retryBtn', m === 'select'); show('box', false);
+  show('homeBtn', m !== 'home'); show('freezeBtn', m === 'live'); show('retryBtn', m === 'select'); show('box', false);
   $('hint').textContent = m === 'live' ? t('live') : t('select');
   error('');
 }
@@ -10372,7 +10373,7 @@ $('file').onchange = e => { loadFile(e.target.files[0]); e.target.value = ''; };
 $('freezeBtn').onclick = freeze;
 $('retryBtn').onclick = () => { sel = null; show('box', false); error(''); };
 $('cancelBtn').onclick = reset;
-$('againBtn').onclick = reset;
+$('againBtn').onclick = reset; $('homeBtn').onclick = reset;
 $('rescanBtn').onclick = () => { if (canvas.width) { setMode('select'); scanSelection(); } };
 $('openBtn').onclick = () => { if (current) window.open(current.href, '_blank', 'noopener,noreferrer'); };
 $('copyBtn').onclick = async () => { if (!current) return; try { await navigator.clipboard.writeText(current.href); toast(t('copied')); } catch (e) { toast(current.href); } };
